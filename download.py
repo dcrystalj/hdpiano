@@ -8,7 +8,7 @@ from requests.auth import HTTPBasicAuth
 def getIframeUrl(source, part):
     r = requests.get(source)
     bs = bs4.BeautifulSoup(r.content, 'lxml')
-    dest = 'player.vimeo.com/video/{}?api=1&player_id=vm-player&color=f47c20&badge=0&byline=0&title=0'
+    dest = 'https://fast.wistia.net/embed/iframe/{}'
     id = bs.find('li', {'id': 'lesson-part-' + str(part)}).a['data-id']
     return dest.format(id)
 
@@ -20,14 +20,14 @@ f.close()
 
 for line in lines:
     print('downloading {}'.format(line))
-    folder_name = line[27:57]
+    folder_name = line.split('/')[4]
     try:
         os.mkdir(folder_name)
     except:
         continue
 
     base_link = line[:-1]
-    total_videos = int(line[-1])
+    total_videos = int(line.split('-')[-1])
 
     for i in range(total_videos, 0, -1):
         video_src = getIframeUrl(base_link+str(i), i)
