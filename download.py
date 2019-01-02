@@ -3,10 +3,14 @@ import os
 from subprocess import call
 import requests
 from requests.auth import HTTPBasicAuth
+import http.cookiejar
 
 
 def getIframeUrl(source, part):
-    r = requests.get(source)
+    cj = http.cookiejar.MozillaCookieJar('cookies.txt')
+    cj.load()
+
+    r = requests.get(source, cookies = cj)
     bs = bs4.BeautifulSoup(r.content, 'lxml')
     dest = 'https://fast.wistia.net/embed/iframe/{}'
     id = bs.find('li', {'id': 'lesson-part-' + str(part)}).a['data-id']
